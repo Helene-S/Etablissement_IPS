@@ -25,8 +25,8 @@ if 'zoom' not in st.session_state:
     st.session_state['zoom'] = 6  # Niveau de zoom initial
 
 # Charger les données IPS
-college_path =os.path.join(os.path.dirname(__file__), '../fr-en-ips-colleges-ap2022.parquet'
-lycee_path =os.path.join(os.path.dirname(__file__), '../fr-en-ips-lycees-ap2022.parquet'
+college_path =os.path.join(os.path.dirname(__file__), '../fr-en-ips-colleges-ap2022.parquet')
+lycee_path =os.path.join(os.path.dirname(__file__), '../fr-en-ips-lycees-ap2022.parquet')
 
 @st.cache_resource
 def charger_donnees_ips():
