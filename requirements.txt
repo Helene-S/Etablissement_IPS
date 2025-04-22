@@ -1,0 +1,9 @@
+Python 3.10.16
+folium 0.19.5
+streamlit 1.44.1
+streamlit_folium 0.25.0
+geopandas 1.0.1
+branca 0.6.0
+pandas 2.2.3
+
+
