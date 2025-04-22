@@ -4,9 +4,12 @@ import folium
 from streamlit_folium import st_folium
 import branca.colormap as cm
 import pandas as pd
+import os
+
 
 # Charger le fond de carte
-shp_file = "/Users/malou/Desktop/Projets/IPS/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp"
+shp_file = os.path.join(os.path.dirname(__file__), '../ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp')
+
 
 @st.cache_data
 def charger_fond_france(shp_path):
@@ -22,8 +25,8 @@ if 'zoom' not in st.session_state:
     st.session_state['zoom'] = 6  # Niveau de zoom initial
 
 # Charger les données IPS
-college_path = "/Users/malou/Desktop/Projets/IPS/fr-en-ips-colleges-ap2022.parquet"
-lycee_path = "/Users/malou/Desktop/Projets/IPS/fr-en-ips-lycees-ap2022.parquet"
+college_path =os.path.join(os.path.dirname(__file__), '../fr-en-ips-colleges-ap2022.parquet'
+lycee_path =os.path.join(os.path.dirname(__file__), '../fr-en-ips-lycees-ap2022.parquet'
 
 @st.cache_resource
 def charger_donnees_ips():
@@ -41,7 +44,8 @@ df_ips = df_ips.dropna(subset=['ips'])
 
 @st.cache_resource
 def charger_donnees_geo():
-    return pd.read_csv("/Users/malou/Desktop/Projets/IPS/fr-en-annuaire-education.csv",
+    path = os.path.join(os.path.dirname(__file__), '../fr-en-annuaire-education.csv')
+    return pd.read_csv(path,
                       encoding='utf-8-sig',
                       sep=';',
                       quotechar='"',
