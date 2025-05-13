@@ -4,5 +4,5 @@ streamlit_folium==0.25.0
 geopandas==1.0.1
 branca==0.6.0
 pandas==2.2.3
-
+pyogrio==0.10.0
 
