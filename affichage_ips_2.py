@@ -37,19 +37,22 @@ if 'zoom' not in st.session_state:
     st.session_state['zoom'] = 6  # Niveau de zoom initial
 
 # Charger les données IPS
+ecole_path =os.path.join(os.path.dirname(__file__), 'fr-en-ips-ecoles-ap2022.parquet')
 college_path =os.path.join(os.path.dirname(__file__), 'fr-en-ips-colleges-ap2022.parquet')
 lycee_path =os.path.join(os.path.dirname(__file__), 'fr-en-ips-lycees-ap2022.parquet')
 
 @st.cache_resource
 def charger_donnees_ips():
+    df_ips_ecole = pd.read_parquet(ecole_path)
     df_ips_college = pd.read_parquet(college_path)
     df_ips_lycee = pd.read_parquet(lycee_path)
     
+    df_ips_ecole['type'] = 'école'
     df_ips_college['type'] = 'collège'
     df_ips_lycee['type'] = 'lycée'
     df_ips_lycee['ips'] = df_ips_lycee['ips_voie_gt']
 
-    return pd.concat([df_ips_college, df_ips_lycee])
+    return pd.concat([df_ips_ecole, df_ips_college, df_ips_lycee])
 
 df_ips = charger_donnees_ips()
 df_ips = df_ips.dropna(subset=['ips'])
@@ -96,7 +99,7 @@ colormap = cm.LinearColormap(
 )
 
 # Fonction pour afficher la carte
-def afficher_carte(gdf, afficher_public, afficher_prive, afficher_college, afficher_lycee):
+def afficher_carte(gdf, afficher_public, afficher_prive, afficher_ecole, afficher_college, afficher_lycee):
     m = folium.Map(location=st.session_state['map_center'], zoom_start=st.session_state['zoom'])
     
     # Ajouter les contours de la France
@@ -116,14 +119,18 @@ def afficher_carte(gdf, afficher_public, afficher_prive, afficher_college, affic
     else:
         gdf_filtered = None
 
-    if afficher_college and not afficher_lycee:
-        gdf_filtered = gdf_filtered[gdf_filtered['type'] == 'collège']
-    elif afficher_lycee and not afficher_college:
-        gdf_filtered = gdf_filtered[gdf_filtered['type'] == 'lycée']
-    elif afficher_college and afficher_lycee:
-        gdf_filtered = gdf_filtered
-    else : 
-        gdf_filtered = None
+    # Dictionnaire pour gérer les choix de type d'établissement
+    type_filter = {
+        'école': afficher_ecole,
+        'collège': afficher_college,
+        'lycée': afficher_lycee
+    }
+    
+    # Filtrage basé sur les choix dans le dictionnaire
+    types_a_afficher = [key for key, value in type_filter.items() if value]
+
+    if types_a_afficher:
+        gdf_filtered = gdf_filtered[gdf_filtered['type'].isin(types_a_afficher)]
       
 
     # Afficher les établissements filtrés
@@ -151,10 +158,11 @@ st.title("Carte des établissements avec IPS")
 # Créer 2 colonnes pour les checkboxes
 col1, col2 = st.columns(2)
 
-# Première colonne : Choix entre Collège ou Lycée
+# Première colonne : Choix entre école, collège ou lycée
 with col1:
-    afficher_college = st.checkbox("Afficher les Collèges", value=True)
-    afficher_lycee = st.checkbox("Afficher les Lycées", value=False)
+    afficher_ecole = st.checkbox("Afficher les écoles", value=True)
+    afficher_college = st.checkbox("Afficher les collèges", value=True)
+    afficher_lycee = st.checkbox("Afficher les lycées", value=False)
 
 # Deuxième colonne : Choix entre Public ou Privé
 with col2:
@@ -162,6 +170,7 @@ with col2:
     afficher_prive = st.checkbox("Afficher les établissements privés", value=False)
 
 # Sauvegarder l'état des checkboxes dans session_state
+st.session_state['afficher_ecole'] = afficher_ecole
 st.session_state['afficher_college'] = afficher_college
 st.session_state['afficher_lycee'] = afficher_lycee
 st.session_state['afficher_public'] = afficher_public
@@ -169,7 +178,7 @@ st.session_state['afficher_prive'] = afficher_prive
 
 # Afficher la carte avec les couches sélectionnées
 m = afficher_carte(gdf, st.session_state['afficher_public'], st.session_state['afficher_prive'], 
-                   st.session_state['afficher_college'], st.session_state['afficher_lycee'])
+                   st.session_state['afficher_ecole'], st.session_state['afficher_college'], st.session_state['afficher_lycee'])
 
 # Afficher la carte avec Streamlit et récupérer l'état de la carte après interaction
 st_data = st_folium(m, width=800, height=600, returned_objects=[])
