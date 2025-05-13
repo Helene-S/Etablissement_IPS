@@ -31,6 +31,8 @@ def charger_fond_france(shp_path):
     france = world[world.NAME == "France"]
     return france
 
+france = charger_fond_france(shp_file)
+
 
 # Initialiser l'état de la carte
 if 'map_center' not in st.session_state:
