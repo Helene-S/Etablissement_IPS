@@ -5,6 +5,7 @@ from streamlit_folium import st_folium
 import branca.colormap as cm
 import pandas as pd
 import os
+import zipfile
 
 import sys
 import streamlit as st
@@ -55,12 +56,16 @@ df_ips = df_ips.dropna(subset=['ips'])
 
 @st.cache_resource
 def charger_donnees_geo():
-    path = os.path.join(os.path.dirname(__file__), 'fr-en-annuaire-education.csv')
-    return pd.read_csv(path,
-                      encoding='utf-8-sig',
-                      sep=';',
-                      quotechar='"',
-                      engine='python')
+    zip_path = os.path.join(os.path.dirname(__file__), 'fr-en-annuaire-education.zip')
+    csv_filename = 'fr-en-annuaire-education.csv'
+
+    with zipfile.ZipFile(zip_path) as z:
+        with z.open(csv_filename) as f:
+            return pd.read_csv(f,
+                               encoding='utf-8-sig',
+                               sep=';',
+                               quotechar='"',
+                               engine='python')
 
 df_geo = charger_donnees_geo()
 
