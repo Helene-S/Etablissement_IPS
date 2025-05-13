@@ -19,6 +19,7 @@ st.sidebar.write("🗂️ Current working directory:", os.getcwd())
 st.sidebar.write("🖥️ Platform:", platform.platform())
 
 
+
 # Charger le fond de carte
 shp_file = os.path.join(os.path.dirname(__file__), 'ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp')
 
@@ -80,7 +81,8 @@ def creer_geodf(df_ips, df_geo):
     gdf = gpd.GeoDataFrame(df_ips, geometry=gpd.points_from_xy(df_ips.longitude, df_ips.latitude), crs="EPSG:4326")
     
     return gdf
-
+#####
+st.dataframe(df_ips.head())
 gdf = creer_geodf(df_ips, df_geo)
 
 # Définir la colormap pour l'IPS
