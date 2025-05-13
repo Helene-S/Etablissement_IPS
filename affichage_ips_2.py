@@ -19,7 +19,7 @@ st.sidebar.write("🖥️ Platform:", platform.platform())
 
 
 # Charger le fond de carte
-shp_file = os.path.join(os.path.dirname(__file__), '../ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp')
+shp_file = os.path.join(os.path.dirname(__file__), 'ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp')
 
 
 @st.cache_data
