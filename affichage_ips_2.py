@@ -6,6 +6,17 @@ import branca.colormap as cm
 import pandas as pd
 import os
 
+import sys
+import streamlit as st
+import platform
+import os
+
+st.sidebar.title("Infos système")
+st.sidebar.write("🧠 Python version:", sys.version)
+st.sidebar.write("📦 Interpreter path:", sys.executable)
+st.sidebar.write("🗂️ Current working directory:", os.getcwd())
+st.sidebar.write("🖥️ Platform:", platform.platform())
+
 
 # Charger le fond de carte
 shp_file = os.path.join(os.path.dirname(__file__), '../ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp')
