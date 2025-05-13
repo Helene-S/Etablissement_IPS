@@ -56,6 +56,7 @@ def charger_donnees_ips():
     return pd.concat([df_ips_ecole, df_ips_college, df_ips_lycee])
 
 df_ips = charger_donnees_ips()
+df_ips['ips'] = pd.to_numeric(df_ips['ips'], errors='coerce')
 df_ips = df_ips.dropna(subset=['ips'])
 
 @st.cache_resource
