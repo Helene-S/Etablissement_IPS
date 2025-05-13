@@ -26,10 +26,11 @@ shp_file = os.path.join(os.path.dirname(__file__), 'ne_110m_admin_0_countries/ne
 
 @st.cache_data
 def charger_fond_france(shp_path):
+    # Filtrer ou simplifier les données géospatiales avant de les charger
     world = gpd.read_file(shp_file)
-    return world[world.NAME == "France"]
+    france = world[world.NAME == "France"]
+    return france
 
-france = charger_fond_france(shp_file)
 
 # Initialiser l'état de la carte
 if 'map_center' not in st.session_state:
@@ -55,6 +56,7 @@ def charger_donnees_ips():
 
     return pd.concat([df_ips_ecole, df_ips_college, df_ips_lycee])
 
+
 df_ips = charger_donnees_ips()
 df_ips['ips'] = pd.to_numeric(df_ips['ips'], errors='coerce')
 df_ips = df_ips.dropna(subset=['ips'])
@@ -77,13 +79,12 @@ df_geo = charger_donnees_geo()
 @st.cache_resource
 def creer_geodf(df_ips, df_geo):
     df_geo_limit = df_geo[['Nom_etablissement', 'Identifiant_de_l_etablissement', 'multi_uai', 'latitude', 'longitude', 'Nom_commune', 'Code_postal', 'Code_commune', 'libelle_nature']]
+    # Filtrage préliminaire des données pour ne pas avoir à joindre trop de données
     df_ips = df_ips.merge(df_geo_limit, left_on='uai', right_on='Identifiant_de_l_etablissement')
-
     gdf = gpd.GeoDataFrame(df_ips, geometry=gpd.points_from_xy(df_ips.longitude, df_ips.latitude), crs="EPSG:4326")
-    
     return gdf
-#####
-st.dataframe(df_ips.head())
+
+
 gdf = creer_geodf(df_ips, df_geo)
 
 # Définir la colormap pour l'IPS
